@@ -3,6 +3,7 @@ package com.zerometal.jmx;
 import static javax.ejb.ConcurrencyManagementType.BEAN;
 
 import java.lang.management.ManagementFactory;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,9 +11,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrencyManagement;
-import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.management.InstanceAlreadyExistsException;
@@ -30,20 +32,19 @@ import com.zerometal.jmx.dto.PerformanceEventDTO;
 import com.zerometal.jmx.ejb.IPerformanceMonitorMXBean;
 import com.zerometal.jmx.ejb.IPerformanceRecorder;
 
-
 /**
  * Session Bean implementation class PerformanceRecorder
  */
 @Singleton
 @Startup
 @ConcurrencyManagement(BEAN)
-@EJB(name="PerformanceRecorder", beanInterface=IPerformanceRecorder.class, beanName="PerformanceRecorder")
+@LocalBean
 public class PerformanceRecorder implements IPerformanceRecorder {
 
 	/** System log */
 	private static final Logger LOG = LogManager.getLogger(PerformanceRecorder.class);
 
-	private static final String MBEAN_NAME = "com.mobiera.tpmlm.%s:type=%s";
+	private static final String MBEAN_NAME = "{0}:type={1}";
 
 	private Map<String, IPerformanceMonitorMXBean> metrics;
 
@@ -61,8 +62,8 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 	@Override
 	@Asynchronous
 	public void receiveEvent(final PerformanceEventDTO event) {
-
-		final String key = String.format(MBEAN_NAME, event.getRoot(), event.getComponent());
+		final String key = MessageFormat.format(MBEAN_NAME, event.getClazz().getName(), event.getComponent());
+		LOG.info(key);
 		final Lock lock = this.getLock(key);
 
 		IPerformanceMonitorMXBean bean = null;
@@ -90,8 +91,7 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 	/**
 	 * Gets the lock.
 	 *
-	 * @param key
-	 *            the key
+	 * @param key the key
 	 * @return the lock
 	 */
 	private synchronized Lock getLock(final String key) {
@@ -104,7 +104,8 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 		return lock;
 	}
 
-	private IPerformanceMonitorMXBean registerInJMX(final String beanName) {
+	@Override
+	public IPerformanceMonitorMXBean registerInJMX(final String beanName) {
 
 		try {
 			IPerformanceMonitorMXBean bean;
@@ -137,6 +138,7 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 
 	}
 
+	@PreDestroy
 	public void unregisterFromJMX() {
 		try {
 			final Set<String> keys = this.metrics.keySet();

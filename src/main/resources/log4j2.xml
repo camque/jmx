@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
+
 	<Appenders>
-		<Console name="stdout" target="SYSTEM_OUT">
-			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%c.%M] - %m%n"/>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5p] [%c.%M] - %m%n"/>
 		</Console>
 	</Appenders>
+	
 	<Loggers>
-		<Root level="debug">
-			<AppenderRef ref="stdout" />
+		<Root level="info">
+			<AppenderRef ref="Console" />
 		</Root>
 	</Loggers>
+	
 </Configuration>
