@@ -1,8 +1,8 @@
-package com.zerometal.jmx;
+package com.github.camque.jmx;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.zerometal.jmx.ejb.IPerformanceMonitorMXBean;
+import com.github.camque.jmx.ejb.IPerformanceMonitorMXBean;
 
 public class PerformanceMonitor implements IPerformanceMonitorMXBean {
 

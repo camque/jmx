@@ -1,4 +1,4 @@
-package com.zerometal.jmx.ejb;
+package com.github.camque.jmx.ejb;
 
 import javax.ejb.Local;
 
