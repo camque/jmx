@@ -34,6 +34,8 @@
 		<version.ejb.plugin>3.0.1</version.ejb.plugin>
 		<version.release.plugin>2.5.3</version.release.plugin>
 		<version.scm.plugin>1.8.1</version.scm.plugin>
+		<version.source.plugin>3.0.1</version.source.plugin>
+		<version.javadoc.plugin>3.1.0</version.javadoc.plugin>
 
 		<!-- maven-compiler-plugin -->
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -112,6 +114,34 @@
 						<version>${version.scm.plugin}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${version.source.plugin}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${version.javadoc.plugin}</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
