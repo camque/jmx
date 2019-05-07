@@ -2,13 +2,17 @@ package com.zerometal.jmx.ejb;
 
 import javax.ejb.Local;
 
-import com.zerometal.jmx.dto.PerformanceEventDTO;
-
 @Local
 public interface IPerformanceRecorder {
 
-	void receiveEvent(final PerformanceEventDTO event);
-
-	IPerformanceMonitorMXBean registerInJMX(String beanName);
+	/**
+	 * Register an event on jmx
+	 * @param clazz
+	 * @param component
+	 * @param transactionTime
+	 * @param isSuccess
+	 */
+	@SuppressWarnings("rawtypes")
+	void registerEvent(Class clazz, String component, long transactionTime, boolean isSuccess);
 
 }

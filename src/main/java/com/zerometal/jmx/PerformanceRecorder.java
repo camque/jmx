@@ -28,12 +28,12 @@ import javax.management.ObjectName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.zerometal.jmx.dto.PerformanceEventDTO;
 import com.zerometal.jmx.ejb.IPerformanceMonitorMXBean;
 import com.zerometal.jmx.ejb.IPerformanceRecorder;
 
 /**
- * Session Bean implementation class PerformanceRecorder
+ * Performance beans
+ * @author zerometal
  */
 @Singleton
 @Startup
@@ -45,25 +45,17 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 	private static final Logger LOG = LogManager.getLogger(PerformanceRecorder.class);
 
 	private static final String MBEAN_NAME = "{0}:type={1}";
-
 	private Map<String, IPerformanceMonitorMXBean> metrics;
-
 	private Map<String, Lock> locks;
-
 	private MBeanServer platformMBeanServer;
 
-	/**
-	 * Default constructor.
-	 */
-	public PerformanceRecorder() {
-		super();
-	}
+	public PerformanceRecorder() {}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Asynchronous
-	public void receiveEvent(final PerformanceEventDTO event) {
-		final String key = MessageFormat.format(MBEAN_NAME, event.getClazz().getName(), event.getComponent());
-		LOG.info(key);
+	public void registerEvent(Class clazz, String component, long transactionTime, boolean isSuccess) {
+		final String key = MessageFormat.format(MBEAN_NAME, clazz.getName(), component);
 		final Lock lock = this.getLock(key);
 
 		IPerformanceMonitorMXBean bean = null;
@@ -79,21 +71,15 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 			lock.unlock();
 		}
 
-		bean.setLastTransactionTimeInMillis(event.getTransactionInMillis());
-		if (event.isSucess()) {
+		bean.setLastTransactionTimeInMillis(transactionTime);
+		if (isSuccess) {
 			bean.incrementProcessed();
-		} else {
+		}
+		else {
 			bean.incrementFailedProcesses();
 		}
-
 	}
 
-	/**
-	 * Gets the lock.
-	 *
-	 * @param key the key
-	 * @return the lock
-	 */
 	private synchronized Lock getLock(final String key) {
 		Lock lock = this.locks.get(key);
 		if (lock == null) {
@@ -104,8 +90,7 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 		return lock;
 	}
 
-	@Override
-	public IPerformanceMonitorMXBean registerInJMX(final String beanName) {
+	private IPerformanceMonitorMXBean registerInJMX(final String beanName) {
 
 		try {
 			IPerformanceMonitorMXBean bean;
@@ -122,8 +107,7 @@ public class PerformanceRecorder implements IPerformanceRecorder {
 
 			return bean;
 
-		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
-				| NotCompliantMBeanException | InstanceNotFoundException e) {
+		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | InstanceNotFoundException e) {
 			LOG.error("Problem during registration of Monitoring into JMX:", e);
 			throw new IllegalStateException("Problem during registration of Monitoring into JMX:" + e, e);
 		}
