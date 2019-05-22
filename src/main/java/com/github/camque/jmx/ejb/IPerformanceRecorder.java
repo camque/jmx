@@ -1,4 +1,4 @@
-package com.zerometal.jmx.ejb;
+package com.github.camque.jmx.ejb;
 
 import javax.ejb.Local;
 
@@ -7,10 +7,10 @@ public interface IPerformanceRecorder {
 
 	/**
 	 * Register an event on jmx
-	 * @param clazz
-	 * @param component
-	 * @param transactionTime
-	 * @param isSuccess
+	 * @param clazz Component class
+	 * @param component Component name
+	 * @param transactionTime Duration
+	 * @param isSuccess Result execution
 	 */
 	@SuppressWarnings("rawtypes")
 	void registerEvent(Class clazz, String component, long transactionTime, boolean isSuccess);

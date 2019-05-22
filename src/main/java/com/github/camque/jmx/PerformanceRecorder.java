@@ -1,4 +1,4 @@
-package com.zerometal.jmx;
+package com.github.camque.jmx;
 
 import static javax.ejb.ConcurrencyManagementType.BEAN;
 
@@ -28,8 +28,8 @@ import javax.management.ObjectName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.zerometal.jmx.ejb.IPerformanceMonitorMXBean;
-import com.zerometal.jmx.ejb.IPerformanceRecorder;
+import com.github.camque.jmx.ejb.IPerformanceMonitorMXBean;
+import com.github.camque.jmx.ejb.IPerformanceRecorder;
 
 /**
  * Performance beans
