@@ -8,7 +8,7 @@ Installation
 Library is available via maven central
 
     <dependency>
-        <groupId>com.zerometal</groupId>
+        <groupId>com.github.camque</groupId>
         <artifactId>jmx</artifactId>
         <version>1.0.0</version>
     </dependency>
